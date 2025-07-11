@@ -66,7 +66,11 @@ export default function Clipper() {
         const res = await fetch('/api/create-clip', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, broadcasterId }),
+            body: JSON.stringify({
+                token,
+                broadcasterId,
+                streamerName: streamerUsername, // ✅ added here
+            }),
         });
 
         const data = await res.json();

@@ -2,7 +2,8 @@ import { exec } from 'child_process';
 import { serialize } from 'cookie';
 
 export default function handler(req, res) {
-    const { code } = req.query;
+    const { code, state } = req.query; // state = return path
+    const nextUrl = state || '/';
 
     if (!code) {
         return res.status(400).send('Missing Twitch authorization code.');
@@ -44,7 +45,8 @@ export default function handler(req, res) {
                 maxAge: 3600, // 1 hour
             }));
 
-            res.redirect('/clipper');
+            res.redirect(nextUrl);
+
         } catch (e) {
             console.error('Failed to parse token response:', stdout);
             res.status(500).send('Auth parse error');

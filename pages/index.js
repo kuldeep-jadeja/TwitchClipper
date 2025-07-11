@@ -40,6 +40,24 @@ export default function Home() {
     }
   };
 
+  const handleClipClick = async (streamerName) => {
+    try {
+      const res = await fetch('/api/token'); // This checks if token cookie exists
+      if (res.status === 200) {
+        // ✅ Already logged in
+        window.location.href = `/clipper?streamer=${encodeURIComponent(streamerName)}`;
+      } else {
+        // 🔒 Not logged in → go to login and redirect back
+        const next = `/clipper?streamer=${encodeURIComponent(streamerName)}`;
+        window.location.href = `/login?next=${encodeURIComponent(next)}`;
+      }
+    } catch (err) {
+      console.error('Clip access check failed:', err);
+      alert('Something went wrong. Try again.');
+    }
+  };
+
+
   const closeModal = () => {
     setSelectedStreamer(null);
     setSelectedHistory([]);
@@ -207,17 +225,17 @@ export default function Home() {
                 <p>Loading history...</p>
               ) : (
                 <>
-                  <ViewerChart data={selectedHistory} />
-                  <div className="mt-4 text-right">
-                    <a
-                      href={`/clipper?streamer=${selectedStreamer.name}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-                    >
-                      🎬 Clip This Stream
-                    </a>
-                  </div>
+                  <>
+                    <ViewerChart data={selectedHistory} />
+                    <div className="mt-4 text-right">
+                      <button
+                        onClick={() => handleClipClick(selectedStreamer.name)}
+                        className="inline-block px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      >
+                        🎬 Clip This Stream
+                      </button>
+                    </div>
+                  </>
                 </>
               )}
             </div>
